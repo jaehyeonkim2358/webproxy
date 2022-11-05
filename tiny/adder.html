@@ -1,0 +1,29 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        function add() {
+            const arg1 = document.getElementById("arg1").value;
+            const arg2 = document.getElementById("arg2").value;
+            document.location.href = `./cgi-bin/adder?${arg1}&${arg2}`;
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <p>Welcome to add.com:</p>
+        <p>THE Internet addition portal.</p>
+        <div>
+            <input type="number" id="arg1">
+            <input type="number" id="arg2">
+            <button onclick="add();">가자!</button>
+        </div>
+        <p>Thanks for visiting!</p>
+    </div>
+</body>
+
+</html>
