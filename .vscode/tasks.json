@@ -1,0 +1,65 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "gcc build",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-g",
+                "${fileDirname}/${fileBasenameNoExtension}.c",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.exe"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "make build",
+            "type": "shell",
+            "command": "/usr/bin/make",
+            "args": [
+                "-C",
+                "${fileDirname}",
+                "server"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "execute",
+            "command": "cmd",
+            "group": "test",
+            "args": [
+                "${fileDirname}/${fileBasenameNoExtension}.exe"
+            ]
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc-11 활성 파일 빌드",
+            "command": "/usr/bin/gcc-11",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "디버거에서 생성된 작업입니다."
+        }
+    ]
+}
