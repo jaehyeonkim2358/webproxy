@@ -136,7 +136,7 @@ int parse_uri(char *uri, char *filename, char *cgiargs) {
 
         if(ptr) {                       /* ptr != NULL 이면 (uri에 '?'가 있음(인자가 존재)) */
             strcpy(cgiargs, ptr+1);     /* '?'다음 부분부터 cgiargs에 복사함 */
-            *ptr = '\0';                /* ptr 초기화 */
+            *ptr = '\0';                /* ptr 위치의 문자를 '\0'로 만들어줌 */
 
         } else {                        /* ptr == NULL 이면 (uri에 '?'가 없음) */
             strcpy(cgiargs, "");        /* CGI에 전달할 args가 존재하지 않음) */
