@@ -9,7 +9,7 @@
 #include "csapp.h"
 
 void doit(int fd);
-void read_requesthdrs(rio_t* rp);
+void read_requesthdrs(rio_t* rp, int connfd);
 int parse_uri(char* uri, char* filename, char* cgiargs);
 void serve_static(int fd, char* filename, int filesize, char* method);
 void get_filetype(char* filename, char* filetype);
@@ -17,6 +17,8 @@ void serve_dynamic(int fd, char* filename, char* cgiargs, char* method);
 void clienterror(int fd, char* cause, char* errnum, char* shortmsg, char* longmsg);
 
 int main(int argc, char** argv) {
+    printf("tiny run..\n");
+    
     int listenfd, connfd;                       // listening descriptor, connected descriptor
     char hostname[MAXLINE], port[MAXLINE];
     socklen_t clientlen;
@@ -29,6 +31,7 @@ int main(int argc, char** argv) {
     }
 
     listenfd = Open_listenfd(argv[1]);
+    printf("tiny listen..\n");
     while (1) {
         clientlen = sizeof(clientaddr);
         connfd = Accept(listenfd, (SA*)&clientaddr, &clientlen);  // line:netp:tiny:accept
@@ -40,6 +43,7 @@ int main(int argc, char** argv) {
 }
 
 void doit(int fd) {
+    printf("tiny connect..\n");
     int is_static;
     struct stat sbuf;
     char buf[MAXLINE], method[MAXLINE], uri[MAXLINE], version[MAXLINE];
@@ -57,7 +61,7 @@ void doit(int fd) {
                     "Tiny does not implement this method");
         return;
     }
-    read_requesthdrs(&rio);
+    read_requesthdrs(&rio, fd);
 
     /* Parse URI from GET request */
     is_static = parse_uri(uri, filename, cgiargs);
@@ -109,12 +113,13 @@ void clienterror(int fd, char *cause, char *errnum,
 /**
  * 요청 헤더를 읽고 무시한다.
 */
-void read_requesthdrs(rio_t *rp) {
+void read_requesthdrs(rio_t *rp, int connfd) {
     char buf[MAXLINE];
 
-    Rio_readlineb(rp, buf, MAXLINE);
+    // Rio_readlineb(rp, buf, MAXLINE);
     while(strcmp(buf, "\r\n")) {
         Rio_readlineb(rp, buf, MAXLINE);
+        // Rio_writen(connfd, buf, MAXLINE);
         printf("%s", buf);
     }
     return;
@@ -158,7 +163,9 @@ void serve_static(int fd, char *filename, int filesize, char *method) {
     sprintf(buf, "%sConnection: close\r\n", buf);
     sprintf(buf, "%sContent-length: %d\r\n", buf, filesize);
     sprintf(buf, "%sContent-type: %s\r\n\r\n", buf, filetype);
+
     Rio_writen(fd, buf, strlen(buf));
+
     printf("Response headers:\n");
     printf("%s", buf);
 
@@ -167,9 +174,10 @@ void serve_static(int fd, char *filename, int filesize, char *method) {
         srcfd = Open(filename, O_RDONLY, 0);
         /* MAP_PRIVATE: indicate that this object(file) is an "copy-on-write" one. (for Rio_writen) */
         srcp = malloc(filesize);
-        rio_readn(srcfd, srcp, filesize);           // srcp = Mmap(0, filesize, PROT_READ, MAP_PRIVATE, srcfd, 0);
+        // srcp = Mmap(0, filesize, PROT_READ, MAP_PRIVATE, srcfd, 0);
+        Rio_readn(srcfd, srcp, filesize);           
         Close(srcfd);
-        rio_writen(fd, srcp, filesize);
+        Rio_writen(fd, srcp, filesize);
         free(srcp);                                 // Munmap(srcp, filesize);
     }
 }
