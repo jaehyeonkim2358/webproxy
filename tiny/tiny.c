@@ -161,8 +161,8 @@ void serve_static(int fd, char *filename, int filesize, char *method) {
     sprintf(buf, "HTTP/1.0 200 OK\r\n");
     sprintf(buf, "%sServer: Tiny Web Server\r\n", buf);
     sprintf(buf, "%sConnection: close\r\n", buf);
-    sprintf(buf, "%sContent-length: %d\r\n", buf, filesize);
-    sprintf(buf, "%sContent-type: %s\r\n\r\n", buf, filetype);
+    sprintf(buf, "%sContent-Length: %d\r\n", buf, filesize);
+    sprintf(buf, "%sContent-Type: %s\r\n\r\n", buf, filetype);
 
     Rio_writen(fd, buf, strlen(buf));
 
@@ -172,13 +172,12 @@ void serve_static(int fd, char *filename, int filesize, char *method) {
     if(!strcasecmp(method, "GET")) {
         /* Send response body to client */
         srcfd = Open(filename, O_RDONLY, 0);
-        /* MAP_PRIVATE: indicate that this object(file) is an "copy-on-write" one. (for Rio_writen) */
         srcp = malloc(filesize);
-        // srcp = Mmap(0, filesize, PROT_READ, MAP_PRIVATE, srcfd, 0);
+
         Rio_readn(srcfd, srcp, filesize);           
         Close(srcfd);
         Rio_writen(fd, srcp, filesize);
-        free(srcp);                                 // Munmap(srcp, filesize);
+        free(srcp);
     }
 }
 

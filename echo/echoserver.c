@@ -37,9 +37,8 @@ void echo(int connfd) {
     while(1) {
         fflush(stdout);
         n = Rio_readlineb(&rio, buf, MAXLINE);
-        printf("%s\n", buf);
         if(n == 0) break;
-        printf("server received %d bytes\n", (int)n);
+        printf("server received %d bytes: %s", (int)n, buf);
         /* 받은 텍스트 줄(buf안에 저장됨)을 그대로 'echo'해준다. */
         Rio_writen(connfd, buf, n);
         
